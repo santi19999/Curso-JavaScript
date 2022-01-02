@@ -12,7 +12,7 @@ const btnesBotones = document.querySelectorAll('.card .btn');
 /**
  * Crreamos el carrito, el cual es un objeto literal
  */
-const carritoObjeto = {};
+const carritoObjeto = [];
 /**
  * Creamos la función para poder agregar los productos al carrito.
  * Esta recibe como parámetro el evento de cada botón que se clickea.
@@ -26,11 +26,13 @@ const agregarAlCarrito = (e) => {
 		id: e.target.dataset.fruta,
 		cantidad: 1,
 	};
-	if (carritoObjeto.hasOwnProperty(producto.titulo)) {
-		producto.cantidad = carritoObjeto[producto.titulo].cantidad + 1;
+	const indice = carritoObjeto.findIndex((item) => item.id === producto.id);
+	if (indice === -1) {
+		carritoObjeto.push(producto);
+	} else {
+		carritoObjeto[indice].cantidad++;
 	}
-	carritoObjeto[producto.titulo] = producto;
-	mostrarCarrito();
+	mostrarCarrito(carritoObjeto);
 };
 
 /**
@@ -40,9 +42,9 @@ const agregarAlCarrito = (e) => {
  * agrega el clon del template al fragment creado paralelo al DOM
  * luego agrega al ul del DOM La lista modificada del template con el producto que se agrega al carrito
  */
-const mostrarCarrito = () => {
+const mostrarCarrito = (array) => {
 	carrito.textContent = '';
-	Object.values(carritoObjeto).forEach((item) => {
+	array.forEach((item) => {
 		const clone = template.content.firstElementChild.cloneNode(true);
 		clone.querySelector('.lead').textContent = item.titulo;
 		clone.querySelector('.badge').textContent = item.cantidad;
