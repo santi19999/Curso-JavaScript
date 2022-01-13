@@ -1,56 +1,68 @@
-/**
- * Primero obtenemos el ul(id=carrito) en cual mostraremos cada elemento que agreguemos al carrito
- * Luego obtenemos el template donde está la lista la cual agregaremos y modificaremos según sea el elemento que se quiera agregar
- * Creamos el Fragment son Nodos del DOM que nunca forman parte del arbol DOM.
- * Obtenemos todos los botones
- */
-const carrito = document.getElementById('carrito');
-const template = document.getElementById('template');
-const fragment = document.createDocumentFragment();
-const btnesBotones = document.querySelectorAll('.card .btn');
+const posts = [
+	{
+		userId: 1,
+		id: 1,
+		title:
+			'sunt aut facere repellat provident occaecati excepturi optio reprehenderit',
+		body: 'quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto',
+	},
+	{
+		userId: 1,
+		id: 2,
+		title: 'qui est esse',
+		body: 'est rerum tempore vitae\nsequi sint nihil reprehenderit dolor beatae ea dolores neque\nfugiat blanditiis voluptate porro vel nihil molestiae ut reiciendis\nqui aperiam non debitis possimus qui neque nisi nulla',
+	},
+	{
+		userId: 1,
+		id: 3,
+		title: 'ea molestias quasi exercitationem repellat qui ipsa sit aut',
+		body: 'et iusto sed quo iure\nvoluptatem occaecati omnis eligendi aut ad\nvoluptatem doloribus vel accusantium quis pariatur\nmolestiae porro eius odio et labore et velit aut',
+	},
+];
 
-/**
- * Crreamos el carrito, el cual es un objeto literal
- */
-const carritoObjeto = [];
-/**
- * Creamos la función para poder agregar los productos al carrito.
- * Esta recibe como parámetro el evento de cada botón que se clickea.
- * Se crea un objeto con los datos de ese producto seleccionado.
- * Evalúa si existe el producto dentro del carrito, si existe, aumenta la cantidad de unidades y vuelve a mostrar el producto actualizado.
- * Si este no existe, agrega el producto al carrito, luego lo muestra por pantalla.
- */
-const agregarAlCarrito = (e) => {
-	const producto = {
-		titulo: e.target.dataset.fruta,
-		id: e.target.dataset.fruta,
-		cantidad: 1,
-	};
-	const indice = carritoObjeto.findIndex((item) => item.id === producto.id);
-	if (indice === -1) {
-		carritoObjeto.push(producto);
-	} else {
-		carritoObjeto[indice].cantidad++;
-	}
-	mostrarCarrito(carritoObjeto);
-};
-
-/**
- * Esta función es la encargada de recorrer el carrito, clonar el template
- * acceder a los elementos que se modificarán para mostrar el producto
- * modifica y agrega el nombre del producto y la cantidad
- * agrega el clon del template al fragment creado paralelo al DOM
- * luego agrega al ul del DOM La lista modificada del template con el producto que se agrega al carrito
- */
-const mostrarCarrito = (array) => {
-	carrito.textContent = '';
-	array.forEach((item) => {
-		const clone = template.content.firstElementChild.cloneNode(true);
-		clone.querySelector('.lead').textContent = item.titulo;
-		clone.querySelector('.badge').textContent = item.cantidad;
-		fragment.appendChild(clone);
+const findPostById = (id) => {
+	const post = posts.find((item) => item.id === id); //buscamos el post y lo almacenamos
+	return new Promise((resolve, reject) => {
+		setTimeout(() => {
+			if (post) {
+				// si el post existe
+				resolve(post.title, post.body); //retorno el post
+			} else {
+				reject('No se encontró el id ' + id); //caso contrario , retorno el nombre del error
+			}
+		}, 2000); //esta funcion retorna una promesa
 	});
-	carrito.appendChild(fragment);
 };
-//Agregamos el evento de clock a cada botón y se dispara la función de agregarAlCarrito
-btnesBotones.forEach((btn) => btn.addEventListener('click', agregarAlCarrito));
+
+// findPostById(4) // invocamos a la funcion
+// 	.then((post) => console.log(post)) //El then es para la respuesta positiva
+// 	.catch((err) => console.log(err)); //El catch es para la respuesta negativa
+
+const buscar = async (id) => {
+	try {
+		const post = await findPostById(id);
+		console.log(post);
+	} catch (error) {
+		console.log(error);
+	} finally {
+		console.log('Finalizo el programa');
+	}
+};
+buscar(3);
+
+//CALLBACK
+// const findPostById = (id, callback) => {
+// 	const post = posts.find((item) => item.id === id);
+// 	if (post) {
+// 		callback(null, post);
+// 	} else {
+// 		callback('No se encontró el post ' + id);
+// 	}
+// };
+
+// findPostById(6, (err, post) => {
+// 	if (err) {
+// 		return console.log(err);
+// 	}
+// 	console.log(post);
+// });
