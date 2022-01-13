@@ -1,17 +1,40 @@
-const url = ' https://pokeapi.co/api/v2/pokemon/ditto';
+const cards = document.getElementById('card-dinamicas');
+const templateCard = document.getElementById('template-card').content;
 
-const findPostById = async (id) => {
+document.addEventListener('DOMContentLoaded', () => {
+	fetchData();
+});
+
+const fetchData = async () => {
 	try {
-		const res = await fetch(url);
-		const pokemon = await res.json();
-		console.log(pokemon);
+		loadingData(true);
+		const respuesta = await fetch('https://rickandmortyapi.com/api/character');
+		const data = await respuesta.json();
+		mostrarCard(data);
 	} catch (error) {
 		console.log(error);
+	} finally {
+		loadingData(false);
 	}
 };
-findPostById();
-//Utilizamos el fetch normal
-// fetch(url)
-// 	.then((respuesta) => respuesta.json())
-// 	.then((data) => console.log(data))
-// 	.catch((e) => console.log(e));
+
+const mostrarCard = (data) => {
+	const fragment = document.createDocumentFragment();
+	data.results.forEach((item) => {
+		const clone = templateCard.cloneNode(true);
+		clone.querySelector('h5').textContent = item.name;
+		clone.querySelector('img').src = item.image;
+		clone.querySelector('p').textContent = item.species;
+		fragment.appendChild(clone);
+	});
+	cards.appendChild(fragment);
+};
+
+const loadingData = (estado) => {
+	const loading = document.getElementById('loading');
+	if (estado) {
+		loading.classList.remove('d-none');
+	} else {
+		loading.classList.add('d-none');
+	}
+};
